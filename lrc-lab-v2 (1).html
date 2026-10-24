@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LRC//LAB v2</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700&family=Space+Mono:wght@400;700&display=swap">
+<style>
+:root{--bg:#f3f3ef;--fg:#0b0b0b;--ac:#ff4b1f;--dim:color-mix(in srgb,var(--fg) 40%,transparent)}
+@media (prefers-color-scheme:dark){:root:not([data-theme]){--bg:#000;--fg:#7dffd0;--ac:#3dffb5}}
+:root[data-theme=cyber]{--bg:#000;--fg:#7dffd0;--ac:#3dffb5}
+:root[data-theme=paper]{--bg:#f3f3ef;--fg:#0b0b0b;--ac:#ff4b1f}
+:root[data-theme=blue]{--bg:#f8faff;--fg:#2b3fb8;--ac:#2b3fb8}
+*{box-sizing:border-box}
+body{margin:auto;max-width:1280px;padding:14px;background:var(--bg);color:var(--fg);font:12px/1.5 "Space Mono","Courier New",monospace;background-image:linear-gradient(var(--dim) 1px,transparent 1px),linear-gradient(90deg,var(--dim) 1px,transparent 1px);background-size:80px 80px}
+body.gl{animation:gl .35s}
+@keyframes gl{0%{opacity:.2}100%{opacity:1}}
+#boot{position:fixed;inset:0;background:var(--bg);z-index:9;padding:24px;transition:opacity .6s;cursor:pointer}
+#boot pre{font-weight:700}#boot.x{opacity:0;pointer-events:none}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:700;letter-spacing:.08em;font-size:11px}
+.chip{border:1px solid var(--fg);padding:3px 10px;background:none;color:var(--fg);font:inherit;cursor:pointer;text-transform:uppercase}
+.chip:hover,.b:hover{background:var(--fg);color:var(--bg)}
+.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin:22px 0}
+h1{position:relative;font:700 clamp(2.4rem,7vw,5rem)/.92 "Chakra Petch","Arial Narrow",sans-serif;margin:0}
+h1 em{color:var(--ac);font-style:normal}
+.note{border:1px solid var(--fg);max-width:340px;padding:8px 10px;font-size:11px;background:var(--bg)}
+.note b{display:block;border-bottom:1px solid var(--fg);margin-bottom:4px}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}
+.s4{grid-column:span 4}.s5{grid-column:span 5}.s7{grid-column:span 7}.s8{grid-column:span 8}.s12{grid-column:span 12}
+@media(max-width:900px){.grid>*{grid-column:span 12}}
+.win{border:1px solid var(--fg);background:var(--bg);position:relative;min-width:0}
+.win::before,.win::after{content:"";position:absolute;width:10px;height:10px;border:2px solid var(--ac);pointer-events:none}
+.win::before{top:-4px;left:-4px;border-right:0;border-bottom:0}
+.win::after{bottom:-4px;right:-4px;border-left:0;border-top:0}
+.win h2{margin:0;font:700 11px "Chakra Petch",sans-serif;letter-spacing:.14em;display:flex;justify-content:space-between;padding:4px 8px;border-bottom:1px solid var(--fg);background:var(--fg);color:var(--bg)}
+.win h2 i{font-style:normal;border:1px solid var(--bg);padding:0 4px;line-height:1.1}
+.in{padding:10px}
+.dz{display:block;border:1px dashed var(--fg);padding:26px 10px;text-align:center;cursor:pointer;font-weight:700;letter-spacing:.1em;}
+@keyframes bd{50%{border-color:var(--ac)}}
+.dz.over,.dz:hover{background:var(--fg);color:var(--bg)}
+.dz input{display:none}
+pre{margin:8px 0 0;white-space:pre-wrap;font:inherit}
+.bc{height:14px;margin-top:10px;background:repeating-linear-gradient(90deg,var(--fg) 0 2px,transparent 2px 4px,var(--fg) 4px 5px,transparent 5px 8px,var(--fg) 8px 11px,transparent 11px 12px);animation:bm 8s linear infinite}
+@keyframes bm{to{background-position-x:24px}}
+.mt{height:10px;border:1px solid var(--fg);margin-top:6px}
+.mt i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,var(--ac) 0 6px,transparent 6px 8px);transition:width .08s}
+.b{border:1px solid var(--fg);background:none;color:var(--fg);font:700 11px "Space Mono",monospace;padding:6px 10px;cursor:pointer;text-transform:uppercase;letter-spacing:.06em}
+.b.p{background:var(--ac);color:var(--bg);border-color:var(--ac)}
+.b:disabled{opacity:.4;pointer-events:none}
+.row2{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center}
+.wv{position:relative;border-bottom:1px solid var(--fg)}
+canvas{display:block;width:100%;height:230px;cursor:crosshair}
+.tag{position:absolute;top:8px;right:8px;font-size:10px;border:1px solid var(--fg);padding:1px 6px;background:var(--bg)}
+.tag::before{content:"";position:absolute;right:100%;top:50%;height:1px;background:var(--fg);animation:ln 2s ease-out forwards}
+@keyframes ln{from{width:0}to{width:30px}}
+.tag::after{content:"";position:absolute;right:calc(100% + 30px);top:50%;width:6px;height:6px;margin:-3px;background:var(--ac);animation:bd 1s steps(2) infinite}
+textarea,input[type=text],select{width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--fg);font:inherit;padding:6px;resize:vertical}
+select{width:auto}
+textarea{height:210px}
+#out{height:84px;margin-top:8px}
+#rows{max-height:250px;overflow:auto;position:relative;border:1px solid var(--fg);margin-top:8px}
+.row{display:flex;gap:8px;padding:2px 6px;align-items:center;border-bottom:1px solid var(--dim)}
+.row input{width:64px;background:none;color:var(--fg);border:1px solid var(--dim);font:inherit;padding:1px 3px}
+.row span{cursor:pointer;flex:1}
+.row.on{background:var(--ac);color:var(--bg)}.row.on input{color:var(--bg)}
+.tabs{display:flex}
+.tb{flex:1;border:0;border-right:1px solid var(--fg);border-bottom:1px solid var(--fg);background:none;color:var(--fg);font:700 11px "Chakra Petch",sans-serif;letter-spacing:.14em;padding:6px;cursor:pointer}
+.tb.on{background:var(--ac);color:var(--bg)}
+.kp{min-height:210px;display:flex;flex-direction:column;justify-content:center;gap:8px;text-align:center;font:700 1.1rem/1.25 "Chakra Petch",sans-serif;opacity:1}
+.kp div{opacity:.35;transition:all .25s}.kp .cur{opacity:1;color:var(--ac);font-size:1.9rem;text-shadow:0 0 14px var(--ac)}
+#log{height:110px;overflow:auto;margin:0;padding:10px}
+#log::after{content:"█";animation:bd 1s steps(2) infinite}
+#pg{height:3px;background:var(--ac);width:0;margin-top:8px;transition:width .2s}
+input[type=range]{accent-color:var(--ac);flex:1;min-width:120px}
+#cands{margin-top:8px;max-height:130px;overflow:auto}#cands .row{cursor:pointer}#cands .row:hover{background:var(--fg);color:var(--bg)}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+</style></head><body>
+<div id="boot"><pre id="bt"></pre></div><audio id="au" preload="auto"></audio>
+<div class="bar"><span>LRC//LAB</span><button class="chip" id="theme">Change reality ◍</button><span>LOCAL TIME <span id="clk"></span></span></div>
+<div class="hero"><h1 data-t="LYRICS,&#10;BY SIGNAL.">LYRICS,<br>BY <em>SIGNAL.</em></h1>
+<div class="note"><b>[ INDEPENDENT AI ]</b>Whisper runs in your browser to hear words + timestamps. Lyrics are searched on LRCLIB, Genius and the open web. No Claude needed.</div></div>
+<div class="grid">
+<section class="win s4"><h2><span>01 // INPUT</span><i>✕</i></h2><div class="in">
+<label class="dz" id="dz">[ DROP MP3 / CLICK ]<input type="file" id="file" accept="audio/*,.mp3"></label>
+<pre id="meta">TITLE   —
+ARTIST  —
+LENGTH  —
+VOCALS  —</pre>VOCAL LEVEL<div class="mt"><i id="lv"></i></div><div class="bc"></div></div></section>
+<section class="win s8"><h2><span>02 // SIGNAL</span><i>✕</i></h2><div class="wv"><canvas id="cv"></canvas>
+
+<span class="tag">VOCAL BAND 250–3500Hz</span></div>
+<div class="in"><div class="row2" style="margin:0"><button class="b p" id="pp" disabled>▶ Play</button><span id="tm">00:00.00 / 00:00.00</span></div></div></section>
+<section class="win s5"><h2><span>03 // LYRICS + AI</span><i>✕</i></h2><div class="in">
+<textarea id="lyr" placeholder="Paste lyrics here, one line per row.&#10;Tags like [Chorus] are ignored.&#10;Or use LOOKUP / TRANSCRIBE."></textarea>
+<div class="row2"><input type="text" id="ti" placeholder="song title" style="flex:1"><input type="text" id="ar" placeholder="artist" style="flex:1"></div><div class="row2"><input type="text" id="lang" placeholder="language (en, hi, es…) blank = auto" style="flex:1"><select id="mdl"><option value="Xenova/whisper-tiny">tiny · fast</option><option value="Xenova/whisper-base" selected>base</option><option value="Xenova/whisper-small">small · best</option></select></div>
+<div class="row2"><button class="b" id="look" disabled>Find lyrics · Web</button><button class="b" id="gen" disabled>Transcribe · Whisper</button><button class="b" id="clr">Clear</button></div><div id="pg"></div><div id="cands"></div></div></section>
+<section class="win s7"><div class="tabs"><button class="tb on" data-t="ed">04 // EDIT + EXPORT</button><button class="tb" data-t="pv">05 // PREVIEW</button></div>
+<div class="in" id="ed"><div class="row2" style="margin:0"><button class="b p" id="sync" disabled>▶ Auto-sync (Whisper)</button><span>OFFSET</span><input type="range" id="off" min="-3" max="3" step="0.05" value="0"><b id="offv">+0.00s</b></div>
+<div id="rows"></div><textarea id="out" readonly placeholder="[00:00.00] your .lrc appears here"></textarea>
+<div class="row2"><button class="b" id="copy">Copy .lrc</button><button class="b p" id="save">Download .lrc</button></div></div>
+<div class="in" id="pv" hidden><div class="kp"><div id="k0"></div><div id="k1" class="cur">—</div><div id="k2"></div><div id="k3"></div></div>
+<div class="row2"><button class="b p" id="pp2">▶ Play</button><button class="b" id="nm">−0.1s</button><button class="b" id="np">+0.1s</button><button class="b" id="st">● Stamp next line</button><select id="sp"><option value=".75">0.75×</option><option value="1" selected>1×</option><option value="1.25">1.25×</option></select></div>
+<pre>Play and watch the lines. Early/late? Nudge ±0.1s, or press “Stamp next line” the instant a line starts being sung to re-time it.</pre></div></section>
+<section class="win s12"><h2><span>CONSOLE</span><i>✕</i></h2><pre id="log"></pre></section>
+</div>
+<script>
+const $=s=>document.querySelector(s),H=.02,au=$('#au');
+const log=m=>{const c=$('#log');c.textContent+='> '+m+'\n';c.scrollTop=1e9};
+let buf,chd,pk,sm=[],act=[],regions=[],lines=[],meta={},fname='lyrics',offset=0,lastK=-2,LO=0,HI=1,asr;
+const fmt=t=>{t=Math.max(0,t);const m=Math.floor(t/60);return String(m).padStart(2,'0')+':'+(t-m*60).toFixed(2).padStart(5,'0')};
+/* boot */
+{const L=['LRC//LAB BIOS (TM) v2.0','MEM CHECK ........ OK','AUDIO CORE ....... OK','WHISPER MODULE ... STANDBY','LRCLIB UPLINK .... STANDBY','','REALITY, BY SIGNAL.'];let i=0;const b=$('#boot'),t=setInterval(()=>{$('#bt').textContent+=(L[i++]||'')+'\n';if(i>L.length+3){clearInterval(t);b.classList.add('x')}},170);b.onclick=()=>{clearInterval(t);b.classList.add('x')}}
+/* theme + clock */
+const themes=['cyber','paper','blue'];let ti=matchMedia('(prefers-color-scheme:dark)').matches?0:1;
+$('#theme').onclick=()=>{ti=(ti+1)%3;document.body.classList.add('gl');setTimeout(()=>document.body.classList.remove('gl'),400);document.documentElement.dataset.theme=themes[ti];log('REALITY → '+themes[ti].toUpperCase())};
+setInterval(()=>$('#clk').textContent=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'}),1000);
+/* id3 */
+function id3(ab){try{const v=new DataView(ab);if(v.getUint8(0)!==73||v.getUint8(1)!==68||v.getUint8(2)!==51)return{};
+const ver=v.getUint8(3),ss=o=>((v.getUint8(o)&127)<<21)|((v.getUint8(o+1)&127)<<14)|((v.getUint8(o+2)&127)<<7)|(v.getUint8(o+3)&127),sz=ss(6);let p=10,r={};
+while(p+10<Math.min(sz+10,ab.byteLength)){const id=String.fromCharCode(...new Uint8Array(ab,p,4)),fs=ver===4?ss(p+4):v.getUint32(p+4);if(!fs||!/^[A-Z0-9]{4}$/.test(id))break;
+if(id==='TIT2'||id==='TPE1'){const e=v.getUint8(p+10);r[id==='TIT2'?'title':'artist']=new TextDecoder(e===1?'utf-16':e===3?'utf-8':'iso-8859-1').decode(new Uint8Array(ab,p+11,fs-1)).replace(/\0/g,'').trim()}p+=10+fs}return r}catch(e){return{}}}
+/* load + analyse */
+async function load(f){au.pause();asrW=null;lines=[];render();log('LOAD '+f.name);
+try{const ab=await f.arrayBuffer();meta=id3(ab);const base=f.name.replace(/\.[^.]+$/,'').replace(/_+/g,' ');fname=base;
+if(!meta.title){const p=base.split(' - ');meta=p.length>1?{artist:p[0].trim(),title:p.slice(1).join(' - ').trim()}:{title:base,artist:''}}
+au.src=URL.createObjectURL(f);au.playbackRate=+$('#sp').value;
+buf=await new OfflineAudioContext(1,1,44100).decodeAudioData(ab.slice(0));chd=buf.getChannelData(0);
+const bs=Math.floor(chd.length/1200);pk=new Float32Array(1200);
+for(let i=0;i<1200;i++){let m=0;for(let j=i*bs;j<i*bs+bs;j+=8){const a=Math.abs(chd[j]);if(a>m)m=a}pk[i]=m}
+log('DECODED '+buf.duration.toFixed(1)+'s');await analyse();
+['pp','look','gen','sync'].forEach(i=>$('#'+i).disabled=false)}catch(e){log('ERR '+(e.message||'could not decode file'))}}
+async function analyse(){log('BANDPASS 250–3500Hz // SCANNING VOCAL ENERGY');
+const o=new OfflineAudioContext(1,buf.length,buf.sampleRate),s=o.createBufferSource();s.buffer=buf;
+const hp=o.createBiquadFilter();hp.type='highpass';hp.frequency.value=250;const lp=o.createBiquadFilter();lp.type='lowpass';lp.frequency.value=3500;
+s.connect(hp);hp.connect(lp);lp.connect(o.destination);s.start();
+const d=(await o.startRendering()).getChannelData(0),w=Math.floor(H*buf.sampleRate),n=Math.floor(d.length/w),env=new Float32Array(n);
+for(let i=0;i<n;i++){let a=0;for(let j=i*w;j<i*w+w;j++)a+=d[j]*d[j];env[i]=20*Math.log10(Math.sqrt(a/w)+1e-6)}
+sm=Array.from(env,(_,i)=>{let a=0,c=0;for(let k=-2;k<=2;k++)if(env[i+k]!==undefined){a+=env[i+k];c++}return a/c});
+const so=[...sm].sort((a,b)=>a-b);LO=so[n*.15|0];HI=so[n*.9|0];const th=LO+.45*(HI-LO),r=[];
+for(let i=0;i<n;i++)if(sm[i]>th){if(r.length&&r[r.length-1][1]===i)r[r.length-1][1]=i+1;else r.push([i,i+1])}
+const m=[];for(const x of r){if(m.length&&x[0]-m[m.length-1][1]<30)m[m.length-1][1]=x[1];else m.push([...x])}
+regions=m.filter(x=>x[1]-x[0]>=12);act=new Array(n).fill(false);regions.forEach(([a,b])=>{for(let i=a;i<b;i++)act[i]=true});
+const sec=act.filter(Boolean).length*H;
+$('#meta').textContent='TITLE   '+(meta.title||'?')+'\nARTIST  '+(meta.artist||'?')+'\nLENGTH  '+fmt(buf.duration)+'\nVOCALS  ~'+sec.toFixed(0)+'s / '+regions.length+' PHRASES';
+log('ACTIVE '+sec.toFixed(1)+'s IN '+regions.length+' REGIONS');$('#ti').value=meta.title||'';$('#ar').value=meta.artist||''}
+/* lyric search: LRCLIB + lyrics.ovh + Genius + open web */
+let asrW=null,asrM='',cands=[],net=1;
+const clean=s=>(s||'').replace(/\(.*?\)|\[.*?\]/g,' ').replace(/\b(official|video|audio|lyrics?|hd|hq|4k|remaster(ed)?|ft\.?|feat\.?)\b.*$/i,' ').replace(/^\s*\d+[\s.\-_]+/,'').replace(/_+/g,' ').replace(/\s+/g,' ').trim();
+const norm=s=>s.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu,' ').split(/\s+/).filter(Boolean);
+const parseLrc=s=>s.split('\n').flatMap(l=>{const m=[...l.matchAll(/\[(\d+):(\d+(?:\.\d+)?)\]/g)],tx=l.replace(/\[[^\]]*\]/g,'').trim();return tx?m.map(x=>({t:+x[1]*60+ +x[2],text:tx})):[]}).sort((a,b)=>a.t-b.t);
+async function J(u){try{const r=await fetch(u);return r.ok?await r.json():[]}catch(e){net=0;return[]}}
+const PX=[u=>'https://api.allorigins.win/raw?url='+encodeURIComponent(u),u=>'https://corsproxy.io/?url='+encodeURIComponent(u),u=>'https://api.codetabs.com/v1/proxy?quest='+encodeURIComponent(u)];
+async function pf(u){for(const p of PX){try{const c=new AbortController(),t=setTimeout(()=>c.abort(),9000),r=await fetch(p(u),{signal:c.signal});clearTimeout(t);if(r.ok){const x=await r.text();if(x.length>200)return x}}catch(e){}}return''}
+const dom=x=>new DOMParser().parseFromString(x,'text/html');
+const txt0=e=>{e.querySelectorAll('br').forEach(b=>b.replaceWith('\n'));return e.textContent.replace(/\n{3,}/g,'\n\n').trim()};
+const scrape=d=>{const c=d.querySelectorAll('[data-lyrics-container="true"]');if(c.length)return[...c].map(txt0).join('\n');let best,bs=0;d.querySelectorAll('div,p,pre,section').forEach(e=>{const b=e.querySelectorAll('br').length;if(b>bs&&b<400&&e.querySelectorAll('div,p,section').length<15){bs=b;best=e}});return bs>=12?txt0(best):''};
+async function web(a,t){
+if(a){log('WEB: lyrics.ovh');const o=await J('https://api.lyrics.ovh/v1/'+encodeURIComponent(a)+'/'+encodeURIComponent(t));if(o&&o.lyrics)return{src:'lyrics.ovh',text:o.lyrics}}
+log('WEB: Genius');try{const h=JSON.parse(await pf('https://genius.com/api/search/multi?per_page=5&q='+encodeURIComponent(a+' '+t))).response.sections.flatMap(x=>x.hits).find(x=>x.type==='song');
+if(h){log('GENIUS: '+h.result.full_title);const x=scrape(dom(await pf(h.result.url)));if(x.split('\n').length>=8)return{src:h.result.url,text:x}}}catch(e){}
+log('WEB: searching the open web');const r=dom(await pf('https://html.duckduckgo.com/html/?q='+encodeURIComponent(a+' '+t+' lyrics')));
+const us=[...r.querySelectorAll('a.result__a')].map(x=>{try{return new URL(x.getAttribute('href'),'https://duckduckgo.com').searchParams.get('uddg')||''}catch(e){return''}}).filter(u=>u&&!/youtube|spotify|apple\.com|wikipedia|shazam|amazon/.test(u)).slice(0,5);
+for(const u of us){log('SCRAPING '+u.slice(0,70));const x=scrape(dom(await pf(u)));if(x.split('\n').length>=12)return{src:u,text:x}}return null}
+function useC(c,to){meta.title=c.trackName;meta.artist=c.artistName;$('#ti').value=c.trackName;$('#ar').value=c.artistName;
+if(c.syncedLyrics){const p=parseLrc(c.syncedLyrics);$('#lyr').value=p.map(l=>l.text).join('\n');
+if(to){lines=[];log('LRCLIB: LYRICS LOADED, BUT DURATION DIFFERS ('+Math.round(c.duration)+'s vs '+Math.round(buf.duration)+'s) — PRESS AUTO-SYNC TO RE-TIME')}else{lines=p;log('LRCLIB: SYNCED LYRICS LOADED — VERIFY IN PREVIEW')}}
+else{$('#lyr').value=c.plainLyrics||'';lines=[];log('LRCLIB: PLAIN LYRICS LOADED — PRESS AUTO-SYNC')}render()}
+function showC(){const C=$('#cands');C.textContent='';cands.slice(0,6).forEach(x=>{const r=document.createElement('div'),d=Math.round(x.duration-buf.duration);r.className='row';r.textContent=(x.syncedLyrics?'♪ SYNC ':'TEXT ')+x.trackName+' — '+x.artistName+' · '+Math.round(x.duration)+'s (Δ'+d+'s)';r.onclick=()=>useC(x,x.syncedLyrics&&Math.abs(d)>6);C.append(r)})}
+async function look(){busy(1);try{net=1;meta.title=$('#ti').value.trim();meta.artist=$('#ar').value.trim();
+const t=clean(meta.title)||clean(fname),a=clean(meta.artist),D=buf.duration,seen={};cands=[];log('SEARCHING "'+a+' — '+t+'"');
+const add=r=>[].concat(r).forEach(x=>{if(x&&x.id&&!seen[x.id]){seen[x.id]=1;cands.push(x)}}),L=q=>'https://lrclib.net/api/'+q;
+add(await J(L('get?'+new URLSearchParams({artist_name:a,track_name:t,duration:Math.round(D)}))));
+add(await J(L('search?'+new URLSearchParams({track_name:t,artist_name:a}))));
+add(await J(L('search?q='+encodeURIComponent((a+' '+t).trim()))));
+if(cands.length<3)add(await J(L('search?q='+encodeURIComponent(t))));
+if(!net)log('LRCLIB UNREACHABLE — CHECK INTERNET / ADBLOCKER');
+const sc=x=>(x.syncedLyrics?100:0)-Math.min(90,Math.abs(x.duration-D))+(norm(x.trackName).join()===norm(t).join()?20:0);
+cands.sort((x,y)=>sc(y)-sc(x));showC();const b=cands.find(x=>x.syncedLyrics||x.plainLyrics);
+if(b){log('LRCLIB: '+cands.length+' RESULTS — BEST: '+b.trackName+' — '+b.artistName+' (other matches listed below)');useC(b,b.syncedLyrics&&Math.abs(b.duration-D)>6)}
+else{log('LRCLIB: NO LYRICS — SEARCHING THE WEB');const w=await web(a,t);
+if(w){$('#lyr').value=w.text.replace(/^paroles de.*\n/i,'').trim();lines=[];render();log('WEB: LYRICS FROM '+w.src+' — REVIEW, THEN AUTO-SYNC')}
+else log('WEB: NOTHING FOUND — FIX TITLE/ARTIST ABOVE, OR PASTE LYRICS (proxies can be flaky)')}
+}catch(e){log('LOOKUP ERR '+e.message)}busy(0)}
+/* independent AI: Whisper with word timestamps */
+async function words(){const m=$('#mdl').value;if(asrW&&asrM===m)return asrW;
+log('WHISPER: LOADING '+m.split('/')[1].toUpperCase()+' (first run downloads, then cached)');
+const {pipeline}=await import('https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.0.2');
+asr=(asrM===m&&asr)||await pipeline('automatic-speech-recognition',m,{progress_callback:p=>{if(p.status==='progress')$('#pg').style.width=p.progress+'%'}});asrM=m;$('#pg').style.width='0';
+log('WHISPER: ISOLATING VOCAL BAND @16kHz');
+const o=new OfflineAudioContext(1,Math.ceil(buf.duration*16000),16000),s=o.createBufferSource();s.buffer=buf;
+const hp=o.createBiquadFilter();hp.type='highpass';hp.frequency.value=150;const lp=o.createBiquadFilter();lp.type='lowpass';lp.frequency.value=4500;
+s.connect(hp);hp.connect(lp);lp.connect(o.destination);s.start();const a=(await o.startRendering()).getChannelData(0);
+log('WHISPER: LISTENING FOR WORDS — CAN TAKE A FEW MINUTES');
+const r=await asr(a,{chunk_length_s:30,stride_length_s:5,return_timestamps:'word',language:$('#lang').value.trim()||undefined,task:'transcribe'});
+asrW=r.chunks.map(c=>({w:norm(c.text).join(''),raw:c.text.trim(),t:c.timestamp[0]||0,e:c.timestamp[1]||c.timestamp[0]||0})).filter(x=>x.w);
+log('WHISPER: HEARD '+asrW.length+' WORDS');return asrW}
+async function transcribe(){busy(1);try{const W=await words();let G=[],cur=[];
+W.forEach((x,i)=>{if(cur.length&&(x.t-W[i-1].e>.7||cur.length>=9)){G.push(cur);cur=[]}cur.push(x)});if(cur.length)G.push(cur);
+lines=G.map(c=>({t:c[0].t,text:c.map(x=>x.raw).join(' ')}));$('#lyr').value=lines.map(l=>l.text).join('\n');log('WHISPER: '+lines.length+' LINES STAMPED — VERIFY IN PREVIEW');render()}
+catch(e){log('AI ERR '+(e.message||e)+' — open this file locally in Chrome/Edge with internet')}busy(0)}
+const busy=v=>['look','gen','sync'].forEach(i=>$('#'+i).disabled=!!v);
+/* alignment: lyrics ⇄ Whisper words (Needleman–Wunsch) */
+const lev=(a,b)=>{const p=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){let q=p[0];p[0]=i;for(let j=1;j<=b.length;j++){const t=p[j];p[j]=Math.min(p[j]+1,p[j-1]+1,q+(a[i-1]===b[j-1]?0:1));q=t}}return p[b.length]};
+const sim=(a,b)=>a===b?3:(a.length>3&&b.length>3&&(a.slice(0,3)===b.slice(0,3)||lev(a,b)<=1))?1:-2;
+async function sync(){const txt=$('#lyr').value.split('\n').map(s=>s.trim()).filter(s=>s&&!/^[\[(].*[\])]$/.test(s));
+if(!buf||!txt.length)return log('NEED AUDIO + LYRICS');busy(1);let W;
+try{W=await words()}catch(e){log('WHISPER UNAVAILABLE ('+(e.message||e)+') — USING VOCAL-ENERGY FALLBACK');busy(0);return energy(txt)}
+if(!W.length){busy(0);log('WHISPER HEARD NO WORDS — ENERGY FALLBACK');return energy(txt)}
+const T=[];txt.forEach((s,i)=>norm(s).forEach((w,p)=>T.push({w,i,p})));
+const n=T.length,m=W.length,M=m+1,sc=new Int16Array((n+1)*M),tb=new Uint8Array((n+1)*M);
+for(let i=1;i<=n;i++){sc[i*M]=-i;tb[i*M]=1}for(let j=1;j<=m;j++){sc[j]=-j;tb[j]=2}
+for(let i=1;i<=n;i++)for(let j=1;j<=m;j++){const d=sc[(i-1)*M+j-1]+sim(T[i-1].w,W[j-1].w),u=sc[(i-1)*M+j]-1,l=sc[i*M+j-1]-1,b=Math.max(d,u,l);sc[i*M+j]=b;tb[i*M+j]=b===d?0:b===u?1:2}
+const at=new Array(n).fill(null);let i=n,j=m,hit=0;
+while(i>0&&j>0){const k=tb[i*M+j];if(k===0){if(sim(T[i-1].w,W[j-1].w)>0){at[i-1]=W[j-1].t;hit++}i--;j--}else if(k===1)i--;else j--}
+log('ALIGN: '+hit+'/'+n+' LYRIC WORDS MATCHED ('+Math.round(hit/n*100)+'%)');
+if(hit<n*.3)log('WARN: LOW MATCH — WRONG LYRICS/LANGUAGE? TRY A BIGGER MODEL OR SET LANGUAGE');
+const avg=.38,st=txt.map(()=>null);T.forEach((x,k)=>{if(at[k]!=null&&st[x.i]==null)st[x.i]=Math.max(0,at[k]-x.p*avg)});
+if(!st.some(v=>v!=null)){busy(0);log('NO MATCHES — ENERGY FALLBACK');return energy(txt)}
+const cnt=txt.map(s=>norm(s).length||1),ws=(a,b)=>{let z=0;for(let q=a;q<b;q++)z+=cnt[q];return z};
+for(let k=0;k<txt.length;k++)if(st[k]==null){let pa=k-1;while(pa>=0&&st[pa]==null)pa--;let nx=k+1;while(nx<txt.length&&st[nx]==null)nx++;
+if(pa>=0&&nx<txt.length)st[k]=st[pa]+(st[nx]-st[pa])*ws(pa,k)/ws(pa,nx);else if(pa>=0)st[k]=st[pa]+ws(pa,k)*avg*1.1;else st[k]=Math.max(0,st[nx]-ws(k,nx)*avg*1.1)}
+let prev=-1;lines=txt.map((text,k)=>{const t=Math.max(st[k],prev+.15);prev=t;return{t:Math.min(t,buf.duration-.1),text}});
+log('SYNCED '+lines.length+' LINES FROM REAL WORD TIMES — VERIFY IN PREVIEW');render();busy(0)}
+function energy(txt){let c=0;const cum=act.map(a=>c+=a?1:0),tot=c;if(!tot)return log('NO VOCAL ENERGY FOUND');
+const w=txt.map(s=>s.split(/\s+/).reduce((a,x)=>a+Math.max(1,(x.match(/[aeiouyàáâäèéêëìíîïòóôöùúûü]+/gi)||[]).length),0)+.5),tw=w.reduce((a,b)=>a+b);
+const ons=[];for(let i=4;i<sm.length;i++)if(act[i]&&sm[i]-sm[i-4]>5&&(!ons.length||i-ons[ons.length-1]>10))ons.push(i);
+let acc=0,prev=-1;lines=txt.map((text,k)=>{const tg=Math.max(1,acc/tw*tot);acc+=w[k];let i=cum.findIndex(v=>v>=tg);if(i<0)i=sm.length-1;
+const b=ons.reduce((p,o)=>Math.abs(o-i)<Math.abs(p-i)?o:p,-9999);if(Math.abs(b-i)<=25)i=b;let t=i*H;if(t<prev+.3)t=prev+.3;prev=t;return{t:Math.min(t,buf.duration-.1),text}});
+log('STAMPED (ENERGY MODE, APPROXIMATE) '+lines.length+' LINES');render()}
+function lrc(){return['[ti:'+(meta.title||fname)+']','[ar:'+(meta.artist||'')+']',buf?'[length:'+fmt(buf.duration).slice(0,5)+']':'','[by:LRC//LAB]'].filter(Boolean).concat(lines.map(l=>'['+fmt(l.t+offset)+']'+l.text)).join('\n')}
+function render(){const L=$('#rows');L.textContent='';lastK=-2;
+lines.forEach(l=>{const r=document.createElement('div');r.className='row';const n=document.createElement('input');n.type='number';n.step='.05';n.value=l.t.toFixed(2);
+n.oninput=()=>{l.t=+n.value||0;out()};const s=document.createElement('span');s.textContent=l.text;s.onclick=()=>{au.currentTime=Math.max(0,l.t+offset);au.play().catch(()=>{})};r.append(n,s);L.append(r)});out()}
+const out=()=>$('#out').value=lines.length?lrc():'';
+const setOff=v=>{offset=Math.max(-3,Math.min(3,v));$('#off').value=offset;$('#offv').textContent=(offset>=0?'+':'')+offset.toFixed(2)+'s';out()};
+$('#off').oninput=e=>setOff(+e.target.value);$('#nm').onclick=()=>setOff(offset-.1);$('#np').onclick=()=>setOff(offset+.1);
+$('#st').onclick=()=>{const l=lines[lastK+1];if(!l)return log('NO NEXT LINE');l.t=Math.max(0,au.currentTime-offset);const r=$('#rows').children[lastK+1];if(r)r.firstChild.value=l.t.toFixed(2);out();log('RE-STAMPED LINE '+(lastK+2)+' @ '+fmt(l.t))};
+/* player */
+const toggle=()=>{if(!buf)return;if(au.paused)au.play().catch(e=>log('PLAY ERR '+e.message));else au.pause()};
+au.onplay=au.onpause=au.onended=()=>{const t=au.paused?'▶ Play':'❚❚ Pause';$('#pp').textContent=t;$('#pp2').textContent=t};
+$('#pp').onclick=$('#pp2').onclick=toggle;$('#sp').onchange=e=>au.playbackRate=+e.target.value;
+$('#cv').onclick=e=>{if(buf)au.currentTime=e.offsetX/$('#cv').clientWidth*buf.duration};
+document.querySelectorAll('.tb').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tb').forEach(x=>x.classList.toggle('on',x===b));$('#ed').hidden=b.dataset.t!=='ed';$('#pv').hidden=b.dataset.t!=='pv'});
+const FN=1024,re=new Float32Array(FN),im=new Float32Array(FN),bars=new Float32Array(48),tmp=new Float32Array(48);
+function fft(){for(let i=1,j=0;i<FN;i++){let b=FN>>1;for(;j&b;b>>=1)j^=b;j^=b;if(i<j){[re[i],re[j]]=[re[j],re[i]];[im[i],im[j]]=[im[j],im[i]]}}
+for(let l=2;l<=FN;l<<=1){const a=-2*Math.PI/l,wr=Math.cos(a),wi=Math.sin(a);for(let i=0;i<FN;i+=l){let cr=1,ci=0;for(let j=0;j<l/2;j++){const u=i+j,v=u+l/2,xr=re[v]*cr-im[v]*ci,xi=re[v]*ci+im[v]*cr;re[v]=re[u]-xr;im[v]=im[u]-xi;re[u]+=xr;im[u]+=xi;const t=cr*wr-ci*wi;ci=cr*wi+ci*wr;cr=t}}}}
+function spec(T){const s=Math.floor(T*buf.sampleRate);for(let i=0;i<FN;i++){re[i]=(chd[s+i]||0)*(.5-.5*Math.cos(2*Math.PI*i/FN));im[i]=0}fft();
+for(let b=0;b<48;b++){const lo=Math.floor(2*Math.pow(110,b/48)),hi=Math.max(lo+1,Math.floor(2*Math.pow(110,(b+1)/48)));let m=0;for(let k=lo;k<hi&&k<FN/2;k++)m=Math.max(m,Math.hypot(re[k],im[k]));tmp[b]=Math.min(1,Math.log10(1+m*20)/2.4)}}
+/* draw loop */
+function draw(){const c=$('#cv'),dp=devicePixelRatio||1,W=c.clientWidth,Y=c.clientHeight;if(c.width!==Math.round(W*dp)){c.width=Math.round(W*dp);c.height=Math.round(Y*dp)}
+const g=c.getContext('2d'),cs=getComputedStyle(document.documentElement),fg=cs.getPropertyValue('--fg').trim(),ac=cs.getPropertyValue('--ac').trim(),tt=performance.now()/1000;
+g.setTransform(dp,0,0,dp,0,0);g.clearRect(0,0,W,Y);g.fillStyle=fg;g.globalAlpha=.12;for(let x=0;x<W;x+=W/12)g.fillRect(x,0,1,Y);g.globalAlpha=1;
+const T=buf?au.currentTime:0,NB=48,base=Y*.62,bw=W/NB,live=buf&&!au.paused;
+if(live)spec(T);
+for(let b=0;b<NB;b++){bars[b]=live?Math.max(bars[b]*.88,tmp[b]):bars[b]*.88;const a=Math.max(2,bars[b]*base);g.fillStyle=bars[b]>.8?ac:fg;g.globalAlpha=.9;g.fillRect(b*bw+1,base-a,Math.max(2,bw-3),a)}
+g.globalAlpha=.5;g.fillStyle=fg;g.fillRect(0,base+2,W,1);
+g.globalAlpha=1;if(!buf){g.fillStyle=fg;g.font='700 12px "Space Mono",monospace';g.textAlign='center';g.fillText('[ AWAITING SIGNAL ]',W/2,Y-24);return}
+const D=buf.duration,y0=Y*.7,h=Y*.28;g.fillStyle=ac;g.globalAlpha=.16;regions.forEach(([a,b])=>g.fillRect(a*H/D*W,y0,(b-a)*H/D*W,h));g.globalAlpha=1;
+g.fillStyle=fg;for(let x=0;x<W;x+=2){const p=Math.max(1,pk[Math.min(1199,x/W*1200|0)]*h*.95);g.fillRect(x,y0+(h-p)/2,1.2,p)}
+g.fillStyle=ac;lines.forEach(l=>g.fillRect((l.t+offset)/D*W,y0,1.5,h));g.fillStyle=fg;g.fillRect(T/D*W,y0-6,2,h+6);
+$('#tm').textContent=fmt(T)+' / '+fmt(D);const fi=Math.floor(T/H);$('#lv').style.width=Math.max(0,Math.min(1,((sm[fi]??LO)-LO)/(HI-LO)))*100+'%';
+let k=-1;lines.forEach((l,i)=>{if(l.t+offset<=T)k=i});
+if(k!==lastK){lastK=k;const R=$('#rows');[...R.children].forEach((r,i)=>r.classList.toggle('on',i===k));
+for(let j=0;j<4;j++){const l=lines[k-1+j];$('#k'+j).textContent=l?l.text:(j===1&&k<0?'—':'')}
+if(k>=0&&!au.paused&&R.children[k])R.scrollTop=R.children[k].offsetTop-R.clientHeight/2}}
+(function loop(){draw();requestAnimationFrame(loop)})();
+/* buttons */
+$('#look').onclick=look;$('#gen').onclick=transcribe;$('#sync').onclick=sync;$('#clr').onclick=()=>{$('#lyr').value='';lines=[];render()};
+$('#copy').onclick=async()=>{const o=$('#out');if(!o.value)return log('NOTHING TO COPY');try{await navigator.clipboard.writeText(o.value)}catch(e){o.select();document.execCommand('copy')}log('COPIED .LRC')};
+$('#save').onclick=()=>{if(!lines.length)return log('NOTHING TO SAVE');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([lrc()],{type:'text/plain'}));a.download=fname.replace(/[\\\/"']/g,'')+'.lrc';a.click();log('SAVED '+a.download)};
+const dz=$('#dz');$('#file').onchange=e=>e.target.files[0]&&load(e.target.files[0]);
+['dragenter','dragover'].forEach(v=>dz.addEventListener(v,e=>{e.preventDefault();dz.classList.add('over')}));
+['dragleave','drop'].forEach(v=>dz.addEventListener(v,e=>{e.preventDefault();dz.classList.remove('over')}));
+dz.addEventListener('drop',e=>e.dataTransfer.files[0]&&load(e.dataTransfer.files[0]));
+log('LRC//LAB v2.0 READY — DROP AN MP3 TO BEGIN');
+</script></body></html>
